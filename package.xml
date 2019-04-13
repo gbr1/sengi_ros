@@ -73,4 +73,13 @@ THE SOFTWARE.
   <exec_depend>roslaunch</exec_depend>
   <exec_depend>rosserial_server</exec_depend>
 
+  <build_depend>tf</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_export_depend>tf</build_export_depend>
+  <build_export_depend>nav_msgs</build_export_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <build_depend>upboard_ros</build_depend>
+  <build_export_depend>upboard_ros</build_export_depend>
+  <exec_depend>upboard_ros</exec_depend>
 </package>

@@ -23,21 +23,10 @@
 #
 cmake_minimum_required(VERSION 2.8.3)
 project(sengi_ros)
-
-find_package(catkin REQUIRED COMPONENTS 
-              roscpp
-              message_generation
-              std_msgs
-              controller_manager
-              hardware_interface
-              realtime_tools
-              topic_tools
-              sensor_msgs
-              roslaunch
-              rosserial_server
-)
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation std_msgs controller_manager hardware_interface realtime_tools topic_tools sensor_msgs roslaunch rosserial_server tf nav_msgs upboard_ros)
 
 include_directories(
+  include ${catkin_INCLUDE_DIRS}
   include 
   ${catkin_INCLUDE_DIRS}
 )
@@ -94,7 +83,15 @@ target_link_libraries(sengi_node
   ${catkin_LIBRARIES}
 )
 
-install(TARGETS sengi_node
+add_executable(sengi_up_sim
+  src/sengi_up_sim.cpp
+)
+add_dependencies(sengi_up_sim ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(sengi_up_sim
+  ${catkin_LIBRARIES}
+)
+
+install(TARGETS sengi_node sengi_up_sim
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
