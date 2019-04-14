@@ -29,6 +29,7 @@
 #include <nav_msgs/Odometry.h>
 
 #include <upboard_ros/Led.h>
+#include <upboard_ros/Leds.h>
 
 double x = 0.0;
 double y = 0.0;
@@ -56,10 +57,10 @@ int main(int argc, char** argv){
     ros::Subscriber emulateDrive = nh.subscribe("/erwhi_velocity_controller/cmd_vel",1,callbackMotor);
     ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 50);
     //ros::Publisher joint_pub = nh.advertise<sensor_msgs::JointState>("/joint_state", 50);
-    ros::Publisher led_pub = nh.advertise<upboard_ros::Led>("/upboard/leds",10);
+    ros::Publisher led_pub = nh.advertise<upboard_ros::Leds>("/upboard/leds",10);
     tf::TransformBroadcaster odom_broadcaster;
-    upboard_ros::Led led_msg1;
-    upboard_ros::Led led_msg2;
+    upboard_ros::Led led_msg;
+    upboard_ros::Leds leds_msg;
 
     ros::Time current_time, last_time;
     current_time = ros::Time::now();
@@ -132,52 +133,62 @@ int main(int argc, char** argv){
 
         //publish leds update
         //right wheel blue forward, yellow backward
-        led_msg1.header.stamp=ros::Time::now();
-        led_msg1.header.frame_id="base_link";
-        led_msg1.led=led_msg1.BLUE;
-        led_msg2.header.stamp=ros::Time::now();
-        led_msg2.header.frame_id="base_link";
-        led_msg2.led=led_msg2.YELLOW;
+        leds_msg.header.stamp=ros::Time::now();
+        leds_msg.header.frame_id="base_link";
         if (wr>0){
-            led_msg1.value=1;
-            led_msg2.value=0;
+            led_msg.led=led_msg.BLUE;
+            led_msg.value=1;
+            leds_msg.leds.push_back(led_msg);
+            led_msg.led=led_msg.YELLOW;
+            led_msg.value=0;
+            leds_msg.leds.push_back(led_msg);
         }
         else {
             if (wr<0){
-                led_msg1.value=0;
-                led_msg2.value=1;
+                led_msg.led=led_msg.BLUE;
+                led_msg.value=0;
+                leds_msg.leds.push_back(led_msg);
+                led_msg.led=led_msg.YELLOW;
+                led_msg.value=1;
+                leds_msg.leds.push_back(led_msg);
             }
             else{
-                led_msg1.value=0;
-                led_msg2.value=0;
+                led_msg.led=led_msg.BLUE;
+                led_msg.value=0;
+                leds_msg.leds.push_back(led_msg);
+                led_msg.led=led_msg.YELLOW;
+                led_msg.value=0;
+                leds_msg.leds.push_back(led_msg);
             }
         }
-        led_pub.publish(led_msg1);
-        led_pub.publish(led_msg2);
-        //left wheel green forward, red backward
-        led_msg1.header.stamp=ros::Time::now();
-        led_msg1.header.frame_id="base_link";
-        led_msg1.led=led_msg1.GREEN;
-        led_msg2.header.stamp=ros::Time::now();
-        led_msg2.header.frame_id="base_link";
-        led_msg2.led=led_msg2.RED;
         if (wl>0){
-            led_msg1.value=1;
-            led_msg2.value=0;
+            led_msg.led=led_msg.GREEN;
+            led_msg.value=1;
+            leds_msg.leds.push_back(led_msg);
+            led_msg.led=led_msg.RED;
+            led_msg.value=0;
+            leds_msg.leds.push_back(led_msg);
         }
         else {
             if (wl<0){
-                led_msg1.value=0;
-                led_msg2.value=1;
+                led_msg.led=led_msg.GREEN;
+                led_msg.value=0;
+                leds_msg.leds.push_back(led_msg);
+                led_msg.led=led_msg.RED;
+                led_msg.value=1;
+                leds_msg.leds.push_back(led_msg);
             }
             else{
-                led_msg1.value=0;
-                led_msg2.value=0;
+                led_msg.led=led_msg.GREEN;
+                led_msg.value=0;
+                leds_msg.leds.push_back(led_msg);
+                led_msg.led=led_msg.RED;
+                led_msg.value=0;
+                leds_msg.leds.push_back(led_msg);
             }
         }
-        led_pub.publish(led_msg1);
-        led_pub.publish(led_msg2);
-
+        led_pub.publish(leds_msg);
+        leds_msg.leds.clear();
 
         last_time = current_time;
         r.sleep();
